@@ -1,7 +1,15 @@
 from typing import List
 from ctransformers import AutoModelForCausalLM
 
-llm2 = AutoModelForCausalLM.from_pretrained("TheBloke/WizardLM-1.0-Uncensored-Llama2-13B-GGUF", model_file="wizardlm-1.0-uncensored-llama2-13b.Q2_K.gguf")
+# llm2 = AutoModelForCausalLM.from_pretrained(
+#     "TheBloke/WizardLM-1.0-Uncensored-Llama2-13B-GGUF", 
+#     model_file="wizardlm-1.0-uncensored-llama2-13b.Q2_K.gguf")
+
+llm2 = AutoModelForCausalLM.from_pretrained(
+    "TheBloke/WizardLM-1.0-Uncensored-Llama2-13B-GGUF",
+    model_file="wizardlm-1.0-uncensored-llama2-13b.Q2_K.gguf",
+    gpu_layers=50,  # try 20, 50, 100... higher = more GPU
+)
 
 def get_prompt(instruction: str, history: List[str] | None = None) -> str:
 
@@ -9,6 +17,7 @@ def get_prompt(instruction: str, history: List[str] | None = None) -> str:
     prompt = f"### System:\n{system}\n\n### User:\n{instruction}\n\n### Response:\n"
     if history is not None:
         prompt += f"This is the convo history: {''.join(history)}. \nNow answer the question: "
+    prompt += f"{instruction}\n\n### Response:\n"
     print(f"Prompt: {prompt}")
     return prompt
 
